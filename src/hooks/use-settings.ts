@@ -1,21 +1,24 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useState } from 'react';
 
-const HAPTICS_KEY = 'settings:haptics';
+import { getDb } from '@/db/client';
 
 export function useHapticsSetting() {
   const [enabled, setEnabled] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem(HAPTICS_KEY).then((val) => {
-      if (val !== null) setEnabled(val === 'true');
-    });
+    const row = getDb().getFirstSync<{ value: string }>(
+      "SELECT value FROM settings WHERE key = 'haptics'",
+    );
+    if (row) setEnabled(row.value === 'true');
   }, []);
 
-  const toggle = useCallback(async () => {
+  const toggle = useCallback(() => {
     const next = !enabled;
     setEnabled(next);
-    await AsyncStorage.setItem(HAPTICS_KEY, String(next));
+    getDb().runSync(
+      "INSERT OR REPLACE INTO settings (key, value) VALUES ('haptics', ?)",
+      String(next),
+    );
   }, [enabled]);
 
   return { hapticsEnabled: enabled, toggleHaptics: toggle };

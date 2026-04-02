@@ -42,6 +42,13 @@ function migrate(db: SQLite.SQLiteDatabase) {
       CREATE INDEX IF NOT EXISTS idx_log_entries_logged_at ON log_entries(logged_at);
       CREATE INDEX IF NOT EXISTS idx_log_entries_event_type ON log_entries(event_type_id);
 
+      CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      );
+
+      INSERT OR IGNORE INTO settings (key, value) VALUES ('haptics', 'true');
+
       PRAGMA user_version = 1;
     `);
   }

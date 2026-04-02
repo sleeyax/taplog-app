@@ -1,13 +1,14 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 
-const HAPTICS_KEY = 'settings:haptics';
+import { getDb } from '@/db/client';
 
-export async function triggerHaptic(
+export function triggerHaptic(
   type: 'light' | 'medium' | 'heavy' = 'medium',
 ) {
-  const val = await AsyncStorage.getItem(HAPTICS_KEY);
-  if (val === 'false') return;
+  const row = getDb().getFirstSync<{ value: string }>(
+    "SELECT value FROM settings WHERE key = 'haptics'",
+  );
+  if (row?.value === 'false') return;
 
   const impact = {
     light: Haptics.ImpactFeedbackStyle.Light,
@@ -15,5 +16,5 @@ export async function triggerHaptic(
     heavy: Haptics.ImpactFeedbackStyle.Heavy,
   }[type];
 
-  await Haptics.impactAsync(impact);
+  Haptics.impactAsync(impact);
 }
