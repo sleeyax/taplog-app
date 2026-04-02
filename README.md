@@ -37,7 +37,18 @@ Scan the QR code with Expo Go, or press `a` to open on a connected Android devic
 ./scripts/seed.sh off   # remove seed after restart
 ```
 
-### Local build
+### Production build
+
+```bash
+npx expo prebuild --platform android
+cd android && JAVA_HOME=<path-to-jdk-21> ANDROID_HOME=<path-to-android-sdk> ./gradlew app:assembleRelease
+```
+
+Output: `android/app/build/outputs/apk/release/app-release.apk`
+
+Requires JDK 17-24, Android SDK, and a signing keystore configured in `android/gradle.properties`. See [Expo local production builds](https://docs.expo.dev/guides/local-app-production/) for full setup.
+
+### Local dev build
 
 ```bash
 npx expo run:android
