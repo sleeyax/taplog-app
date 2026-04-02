@@ -26,12 +26,7 @@ export default function TabLayout() {
             <MaterialIcons name="touch-app" size={size} color={color} />
           ),
           headerRight: () => (
-            <Pressable onPress={() => router.push('/settings')} style={{ marginRight: 16 }}>
-              <MaterialIcons name="settings" size={24} color={theme.textSecondary} />
-            </Pressable>
-          ),
-          headerLeft: () => (
-            <Pressable onPress={() => router.push('/manage-events')} style={{ marginLeft: 16 }}>
+            <Pressable onPress={() => router.push('/manage-events')} style={{ marginRight: 12 }} hitSlop={8}>
               <MaterialIcons name="edit" size={24} color={theme.textSecondary} />
             </Pressable>
           ),
@@ -43,6 +38,15 @@ export default function TabLayout() {
           title: 'Logbook',
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="list-alt" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="settings" size={size} color={color} />
           ),
         }}
       />

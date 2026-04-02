@@ -25,10 +25,6 @@ export default function RootLayout() {
           name="event-type-form"
           options={{ presentation: 'modal', title: 'New Event' }}
         />
-        <Stack.Screen
-          name="settings"
-          options={{ presentation: 'modal', title: 'Settings' }}
-        />
       </Stack>
     </ThemeProvider>
   );
