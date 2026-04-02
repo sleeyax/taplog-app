@@ -11,6 +11,7 @@ import {
 
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
+import { useEventTypes } from '@/hooks/use-event-types';
 import { useLogEntries } from '@/hooks/use-log-entries';
 import { useHapticsSetting } from '@/hooks/use-settings';
 import { useTheme } from '@/hooks/use-theme';
@@ -19,6 +20,7 @@ import { exportBackup, importBackup } from '@/utils/backup';
 import { exportLogbookPdf } from '@/utils/pdf-export';
 
 export default function SettingsScreen() {
+  const { eventTypes, remove: removeEvent } = useEventTypes();
   const { entries, clearAll } = useLogEntries();
   const { hapticsEnabled, toggleHaptics } = useHapticsSetting();
   const { themeMode, setThemeMode } = useThemeSetting();
@@ -34,6 +36,26 @@ export default function SettingsScreen() {
       ],
     );
   }, [entries.length, clearAll]);
+
+  const handleClearAll = useCallback(() => {
+    Alert.alert(
+      'Clear All Data',
+      `Delete all events and log entries? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear All',
+          style: 'destructive',
+          onPress: () => {
+            clearAll();
+            for (const et of eventTypes) {
+              removeEvent(et.id);
+            }
+          },
+        },
+      ],
+    );
+  }, [eventTypes, clearAll, removeEvent]);
 
   const handleExportPdf = useCallback(async () => {
     if (entries.length === 0) {
@@ -137,17 +159,24 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Logbook</ThemedText>
+        <ThemedText style={styles.sectionTitle}>Data</ThemedText>
         <SettingsButton
           icon="picture-as-pdf"
-          label="Export as PDF"
+          label="Export Logbook as PDF"
           onPress={handleExportPdf}
           theme={theme}
         />
         <SettingsButton
           icon="delete-sweep"
-          label="Clear"
+          label="Clear Logbook"
           onPress={handleClear}
+          theme={theme}
+          destructive
+        />
+        <SettingsButton
+          icon="delete-forever"
+          label="Clear All"
+          onPress={handleClearAll}
           theme={theme}
           destructive
         />
