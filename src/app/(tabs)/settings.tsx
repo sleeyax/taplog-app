@@ -14,12 +14,14 @@ import { Spacing } from '@/constants/theme';
 import { useLogEntries } from '@/hooks/use-log-entries';
 import { useHapticsSetting } from '@/hooks/use-settings';
 import { useTheme } from '@/hooks/use-theme';
+import { type ThemeMode, useThemeSetting } from '@/hooks/use-theme-setting';
 import { exportBackup, importBackup } from '@/utils/backup';
 import { exportLogbookPdf } from '@/utils/pdf-export';
 
 export default function SettingsScreen() {
   const { entries, clearAll } = useLogEntries();
   const { hapticsEnabled, toggleHaptics } = useHapticsSetting();
+  const { themeMode, setThemeMode } = useThemeSetting();
   const theme = useTheme();
 
   const handleClear = useCallback(() => {
@@ -86,6 +88,31 @@ export default function SettingsScreen() {
     >
       <View style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Preferences</ThemedText>
+        <View style={[styles.row, { backgroundColor: theme.backgroundElement }]}>
+          <MaterialIcons name="palette" size={22} color={theme.textSecondary} />
+          <ThemedText style={styles.rowText}>Theme</ThemedText>
+          <View style={styles.themeToggle}>
+            {(['system', 'light', 'dark'] as ThemeMode[]).map((mode) => (
+              <Pressable
+                key={mode}
+                style={[
+                  styles.themeOption,
+                  { backgroundColor: themeMode === mode ? theme.backgroundSelected : 'transparent' },
+                ]}
+                onPress={() => setThemeMode(mode)}
+              >
+                <ThemedText
+                  style={[
+                    styles.themeOptionText,
+                    themeMode === mode && { fontWeight: '700' },
+                  ]}
+                >
+                  {mode.charAt(0).toUpperCase() + mode.slice(1)}
+                </ThemedText>
+              </Pressable>
+            ))}
+          </View>
+        </View>
         <View style={[styles.row, { backgroundColor: theme.backgroundElement }]}>
           <MaterialIcons name="vibration" size={22} color={theme.textSecondary} />
           <ThemedText style={styles.rowText}>Haptic Feedback</ThemedText>
@@ -192,6 +219,20 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     fontWeight: '500',
+  },
+  themeToggle: {
+    flexDirection: 'row',
+    borderRadius: 8,
+    overflow: 'hidden',
+    gap: 2,
+  },
+  themeOption: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  themeOptionText: {
+    fontSize: 13,
   },
   version: {
     textAlign: 'center',
