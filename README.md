@@ -76,4 +76,4 @@ npx expo run:android
 - `expo-sqlite` for local storage
 - `expo-router` for file-based navigation
 - `react-native-reanimated` for animations
-- `expo-print` + expo-sharing for PDF export
+- `expo-print` + `expo-sharing` for PDF export
