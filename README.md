@@ -23,8 +23,8 @@ Works for any recurring event you want to track with minimal friction.
 
 <p>
   <img src="docs/images/log_events.png" width="180" />
-  <img src="docs/images/logbook.png" width="180" />
   <img src="docs/images/create_event.png" width="180" />
+  <img src="docs/images/logbook.png" width="180" />
 </p>
 
 ## Development
