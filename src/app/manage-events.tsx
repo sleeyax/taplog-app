@@ -3,11 +3,15 @@ import { router } from 'expo-router';
 import React, { useCallback } from 'react';
 import {
   Alert,
-  FlatList,
   Pressable,
   StyleSheet,
   View,
 } from 'react-native';
+import DraggableFlatList, {
+  ScaleDecorator,
+  type RenderItemParams,
+} from 'react-native-draggable-flatlist';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { EmptyState } from '@/components/empty-state';
 import { ThemedText } from '@/components/themed-text';
@@ -17,7 +21,7 @@ import { useEventTypes } from '@/hooks/use-event-types';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function ManageEventsScreen() {
-  const { eventTypes, remove } = useEventTypes();
+  const { eventTypes, remove, reorder } = useEventTypes();
   const theme = useTheme();
 
   const handleDelete = useCallback(
@@ -38,6 +42,44 @@ export default function ManageEventsScreen() {
     [remove],
   );
 
+  const handleDragEnd = useCallback(
+    ({ data }: { data: EventType[] }) => {
+      reorder(data.map((e) => e.id));
+    },
+    [reorder],
+  );
+
+  const renderItem = useCallback(
+    ({ item, drag, isActive }: RenderItemParams<EventType>) => (
+      <ScaleDecorator>
+        <Pressable
+          style={[
+            styles.row,
+            { backgroundColor: isActive ? theme.backgroundSelected : theme.backgroundElement },
+          ]}
+          onPress={() => router.push({ pathname: '/event-type-form', params: { id: item.id } })}
+          onLongPress={drag}
+          delayLongPress={150}
+        >
+          <MaterialIcons name="drag-handle" size={22} color={theme.textSecondary} />
+          <View style={[styles.colorDot, { backgroundColor: item.color }]} />
+          <ThemedText style={styles.icon}>{item.icon}</ThemedText>
+          <ThemedText style={styles.name} numberOfLines={1}>
+            {item.name}
+          </ThemedText>
+          <Pressable
+            onPress={() => handleDelete(item)}
+            hitSlop={12}
+            style={styles.deleteButton}
+          >
+            <MaterialIcons name="delete-outline" size={22} color={theme.textSecondary} />
+          </Pressable>
+        </Pressable>
+      </ScaleDecorator>
+    ),
+    [theme, handleDelete],
+  );
+
   if (eventTypes.length === 0) {
     return (
       <EmptyState
@@ -49,31 +91,14 @@ export default function ManageEventsScreen() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <FlatList
+    <GestureHandlerRootView style={[styles.container, { backgroundColor: theme.background }]}>
+      <DraggableFlatList
         data={eventTypes}
         keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        onDragEnd={handleDragEnd}
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        renderItem={({ item }) => (
-          <Pressable
-            style={[styles.row, { backgroundColor: theme.backgroundElement }]}
-            onPress={() => router.push({ pathname: '/event-type-form', params: { id: item.id } })}
-          >
-            <View style={[styles.colorDot, { backgroundColor: item.color }]} />
-            <ThemedText style={styles.icon}>{item.icon}</ThemedText>
-            <ThemedText style={styles.name} numberOfLines={1}>
-              {item.name}
-            </ThemedText>
-            <Pressable
-              onPress={() => handleDelete(item)}
-              hitSlop={12}
-              style={styles.deleteButton}
-            >
-              <MaterialIcons name="delete-outline" size={22} color={theme.textSecondary} />
-            </Pressable>
-          </Pressable>
-        )}
       />
 
       <View style={styles.fab}>
@@ -84,7 +109,7 @@ export default function ManageEventsScreen() {
           <MaterialIcons name="add" size={28} color={theme.text} />
         </Pressable>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
