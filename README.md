@@ -30,6 +30,13 @@ pnpm start
 
 Scan the QR code with Expo Go, or press `a` to open on a connected Android device.
 
+### Seed test data
+
+```bash
+./scripts/seed.sh on    # inject 3 months of realistic data
+./scripts/seed.sh off   # remove seed after restart
+```
+
 ### Local build
 
 ```bash
