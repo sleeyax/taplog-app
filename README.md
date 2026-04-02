@@ -41,7 +41,14 @@ Scan the QR code with Expo Go, or press `a` to open on a connected Android devic
 
 ```bash
 npx expo prebuild --platform android
-cd android && JAVA_HOME=<path-to-jdk-21> ANDROID_HOME=<path-to-android-sdk> ./gradlew app:assembleRelease
+cd android && JAVA_HOME=<path-to-jdk-21> ANDROID_HOME=<path-to-android-sdk> \
+  ./gradlew app:assembleRelease
+```
+
+To build for arm64 only (reduces APK from ~98 MB to ~40 MB):
+
+```bash
+./gradlew app:assembleRelease -PreactNativeArchitectures=arm64-v8a
 ```
 
 Output: `android/app/build/outputs/apk/release/app-release.apk`
