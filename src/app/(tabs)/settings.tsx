@@ -110,16 +110,16 @@ export default function SettingsScreen() {
       </View>
 
       <View style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Data</ThemedText>
+        <ThemedText style={styles.sectionTitle}>Logbook</ThemedText>
         <SettingsButton
           icon="picture-as-pdf"
-          label="Export Logbook as PDF"
+          label="Export as PDF"
           onPress={handleExportPdf}
           theme={theme}
         />
         <SettingsButton
           icon="delete-sweep"
-          label="Clear Logbook"
+          label="Clear"
           onPress={handleClear}
           theme={theme}
           destructive
